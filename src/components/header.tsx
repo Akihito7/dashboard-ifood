@@ -15,7 +15,7 @@ export function Header() {
   }
 
   return (
-    <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-4 py-4">
+    <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-12 py-4">
       <SiFoodpanda
         size={28}
         className="text-black dark:text-foreground-dark mr-12 hover:cursor-pointer"
@@ -47,7 +47,7 @@ export function Header() {
 
       <div className="flex items-center gap-4">
         <button
-          className="p-2 bg-transparent border-2 border-dark  dark:border-gray-500 flex justify-center items-center rounded-md"
+          className="p-2 bg-transparent border border-dark   dark:border-gray-800 flex justify-center items-center rounded-md dark:shadow-lg "
           onClick={handleToggleTheme}
         >
           <IoMoonOutline
@@ -56,7 +56,7 @@ export function Header() {
           />
         </button>
 
-        <button className="px-4 py-2 flex bg-transparent border-2 border-dark dark:border-gray-500 justify-center rounded-md gap-2 items-center">
+        <button className="px-4 py-2 flex bg-transparent border border-dark dark:border-gray-800 justify-center rounded-md gap-2 items-center dark:shadow-lg ">
           <span className="text-black dark:text-foreground-dark text-md">
             Burguer King
           </span>
