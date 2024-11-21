@@ -1,4 +1,8 @@
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { GraphicRevenueByPeriod } from "./graphic-revenue-by-period";
+import { GraphicLineChart } from "./graphic-line-chart";
+import { GraphicBestSellers } from "./graphic-best-sellers";
+import { GraphicPieChart } from "./graphic-pie-chart";
 
 export function ContentDashboard() {
   return (
@@ -96,15 +100,11 @@ export function ContentDashboard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
           <div className="col-span-2 sm:col-span-1 lg:col-span-2">
-            <Card className="h-96 py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
-    
-            </Card>
+            <GraphicRevenueByPeriod />
           </div>
 
           <div className="col-span-1 sm:col-span-1 lg:col-span-1">
-            <Card className="h-96 py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
-  
-            </Card>
+            <GraphicBestSellers />
           </div>
         </div>
       </div>
