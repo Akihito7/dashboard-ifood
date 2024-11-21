@@ -1,5 +1,6 @@
 'use client'
 
+import { setCookies } from "@/actions/cookies";
 import { login } from "@/api/login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,8 +14,15 @@ export function FormLogin() {
 
     async function handleLogin({ email, password }: LoginDTO) {
         try {
-            await login({ email, password })
-        } catch (error : any) {
+            const KEY_TOKEN = "@dashboard:token";
+            const token = await login({ email, password });
+            setCookies({
+                key: KEY_TOKEN, value: token, optionsCookies: {
+                    secure: true,
+                    httpOnly: true
+                }
+            })
+        } catch (error: any) {
             alert(error.message)
         }
     }
