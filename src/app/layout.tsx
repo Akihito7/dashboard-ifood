@@ -17,7 +17,6 @@ export default async function RootLayout({
   return (
     <html lang="pt-br">
       <body className={theme}>
-        <Header />
         <main>{children}</main>
       </body>
     </html>
