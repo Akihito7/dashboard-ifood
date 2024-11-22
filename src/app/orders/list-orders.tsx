@@ -103,9 +103,7 @@ function filterOrders(
     const matchesUsername = usernameClient
       ? order.username.toLowerCase().includes(usernameClient.toLowerCase())
       : true;
-
-      console.log("statusOrder", statusOrder)
-
+      
     const matchesStatus = statusOrder
       ? order.status.toLowerCase().includes(statusOrder.toLowerCase())
       : true;
