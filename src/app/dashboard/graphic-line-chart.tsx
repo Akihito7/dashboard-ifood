@@ -1,79 +1,90 @@
-"use client"
-
-import { CartesianGrid, LabelList, Line, LineChart, XAxis, ResponsiveContainer } from "recharts"
+import { CartesianGrid, LabelList, Line, LineChart, XAxis, ResponsiveContainer } from "recharts";
 
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart"
-const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-]
+} from "@/components/ui/chart";
 
-const chartConfig = {
+
+interface GraphicLineChartProps {
+  items: {
+    order_date: string; 
+    _count: {
+      _all: number; 
+    };
+    _sum: { total_price: string }; 
+  }[] | undefined;
+}
+function formatData(items: GraphicLineChartProps['items']) {
+  if (!items) return [];
+
+  return items.map(item => ({
+    date: new Date(item.order_date).toLocaleDateString('default', { day: '2-digit', month: '2-digit' }),
+    count: item._count._all,
+  }));
+}
+
+export function GraphicLineChart({ items }: GraphicLineChartProps) {
+
+  const chartData = formatData(items);
+  const chartConfig = {
     desktop: {
-        label: "Desktop",
-        color: "hsl(var(--chart-1))",
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
     },
     mobile: {
-        label: "Mobile",
-        color: "hsl(var(--chart-2))",
+      label: "Mobile",
+      color: "hsl(var(--chart-2))",
     },
-} satisfies ChartConfig
+  } satisfies ChartConfig;
 
-export function GraphicLineChart() {
-    return (
-        <ChartContainer config={chartConfig} className="h-96">
-            <ResponsiveContainer>
-                <LineChart
-                    accessibilityLayer
-                    data={chartData}
-                    margin={{
-                        top: 20,
-                        left: 12,
-                        right: 12,
-                    }}
-                >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                        dataKey="month"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => value.slice(0, 3)}
-                    />
-                    <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent indicator="line" />}
-                    />
-                    <Line
-                        dataKey="desktop"
-                        type="natural"
-                        stroke="#7a72ee"
-                        strokeWidth={2}
-                        dot={{
-                            fill: "var(--color-desktop)",
-                        }}
-                        activeDot={{
-                            r: 6,
-                        }}
-                    >
-                        <LabelList
-                            position="top"
-                            offset={12}
-                            className="fill-foreground"
-                            fontSize={12}
-                        />
-                    </Line>
-                </LineChart>
-            </ResponsiveContainer>
-        </ChartContainer>
-    )
+  return (
+    <ChartContainer config={chartConfig} className="h-96">
+      <ResponsiveContainer>
+        <LineChart
+          accessibilityLayer
+          data={chartData}
+          margin={{
+            top: 20,
+            left: 12,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="date" 
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value}
+          />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent indicator="line" />}
+          />
+          <Line
+            dataKey="count" 
+            type="natural"
+            stroke="#7a72ee"
+            strokeWidth={2}
+            dot={{
+              fill: "var(--color-desktop)",
+            }}
+            activeDot={{
+              r: 6,
+            }}
+          >
+            <LabelList
+              position="top"
+              offset={12}
+              className="fill-foreground"
+              fontSize={12}
+            />
+          </Line>
+        </LineChart>
+      </ResponsiveContainer>
+    </ChartContainer>
+  );
 }

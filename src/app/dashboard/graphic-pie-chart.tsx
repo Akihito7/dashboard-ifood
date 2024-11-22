@@ -40,7 +40,6 @@ interface GraphicPieChartProps {
   items : GetBestSellersProducts[] | undefined
 }
 export function GraphicPieChart({items} : GraphicPieChartProps) {
-  console.log("items do grafico",items)
   return (
         <ChartContainer
           config={chartConfig}
