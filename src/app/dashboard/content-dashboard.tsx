@@ -1,10 +1,56 @@
+"use client";
+
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { GraphicRevenueByPeriod } from "./graphic-revenue-by-period";
-import { GraphicLineChart } from "./graphic-line-chart";
 import { GraphicBestSellers } from "./graphic-best-sellers";
-import { GraphicPieChart } from "./graphic-pie-chart";
+import { getTotalCountOrdersByDay } from "@/api/get-total-count-orders-by-day";
+import { useQuery } from "@tanstack/react-query";
+import {getTotalCountOrdersByMonth } from "@/api/get-total-count-orders-by-month";
+import { getTotalRevenueByMonth } from "@/api/get-total-revenue-by-month";
+import { GetTotalRevenueByMonth } from "@/api/types/get-total-revenue-by-month";
+import { getTotalCountOrdersCancelledByMonth } from "@/api/get-total-count-orders-cancelled-by-month";
+import { GetTotalCountOrdersByDay } from "@/api/types/get-total-count-orders-by-day";
+import { GetTotalCountOrdersByMonth } from "@/api/types/get-total-count-orders-by-month";
+import { GetTotalCountOrdersCancelledByMonth } from "@/api/types/get-total-count-orders-canceled-by-month";
 
 export function ContentDashboard() {
+  const currentDateIso = new Date().toISOString();
+  const {
+    data: totalCountOrdersByDay,
+    error: errorTotalCountByDay,
+    isLoading: isLoadingTotalCountOrdersByDay,
+  } = useQuery<GetTotalCountOrdersByDay>({
+    queryKey: ["totalOrdersCountByDay"],
+    queryFn: async () => getTotalCountOrdersByDay(currentDateIso),
+  });
+
+  const {
+    data: totalCountOrdersByMonth,
+    error: errorTotalCountOrdersByMonth,
+    isLoading: isLoadingTotalCountOrdersByMonth,
+  } = useQuery<GetTotalCountOrdersByMonth>({
+    queryKey: ["ordersCountByMonth"],
+    queryFn: async () => getTotalCountOrdersByMonth(currentDateIso),
+  });
+
+  const {
+    data: totalRevenueByMonth,
+    error: errorTotalRevenueByMonth,
+    isLoading: isLoadingTotalRevenueByMonth,
+  } = useQuery<GetTotalRevenueByMonth>({
+    queryKey: ["totalRevenueByMonth"],
+    queryFn: getTotalRevenueByMonth,
+  });
+
+  const {
+    data: totalCountOrdersCancelledByMonth,
+    error: errorTotalCountOrdersCancelledByMonth,
+    isLoading: isLoadingTotalCountOrdersCancelledByMonth,
+  } = useQuery<GetTotalCountOrdersCancelledByMonth>({
+    queryKey: ["ordersCountCancelled"],
+    queryFn: async () => getTotalCountOrdersCancelledByMonth(currentDateIso),
+  });
+
   return (
     <div className="w-full min-h-screen bg-white dark:bg-background-dark flex justify-center py-4">
       <div className="flex flex-col max-w-[1400px] px-12">
@@ -22,14 +68,23 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                R$ 65.575,00
+                {isLoadingTotalRevenueByMonth
+                  ? ""
+                  : Number(
+                      totalRevenueByMonth!.currentMonthTotalRevenue
+                    ).toLocaleString("pt-br", {
+                      currency: "BRL",
+                      style: "currency",
+                    })}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">-76.66% </span>em relação ao mês
-                passado
+                <span className="text-red-400">
+                  {totalRevenueByMonth?.percentageChange}% {""}
+                </span>
+                Em relação ao mês passado
               </p>
             </CardFooter>
           </Card>
@@ -43,14 +98,16 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                35
+                {totalCountOrdersByMonth?.totalOrders}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">-76.66% </span>em relação ao mês
-                passado
+                <span className="text-red-400">
+                  {totalCountOrdersByMonth?.percentageChange}%{" "}
+                </span>
+                Em relação ao mês passado
               </p>
             </CardFooter>
           </Card>
@@ -64,14 +121,16 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                0
+                {totalCountOrdersByDay?.totalOrders}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">-76.66% </span>em relação ao mês
-                passado
+                <span className="text-red-400">
+                  {totalCountOrdersByDay?.percentageChange}%{" "}
+                </span>
+                Em relação ao dia anterior
               </p>
             </CardFooter>
           </Card>
@@ -85,13 +144,13 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                6
+                {totalCountOrdersCancelledByMonth?.totalOrdersCancelled}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">-76.66% </span>em relação ao mês
+                <span className="text-red-400">{totalCountOrdersCancelledByMonth?.percentageChange}% </span>Em relação ao mês
                 passado
               </p>
             </CardFooter>

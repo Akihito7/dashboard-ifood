@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { getThemeCookies } from "@/actions/theme-cookies";
+import { TanstackProvider } from "@/providers/tanstack-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,10 +15,12 @@ export default async function RootLayout({
 }>) {
   const theme = await getThemeCookies();
   return (
-    <html lang="pt-br">
-      <body className={theme}>
-        <main>{children}</main>
-      </body>
-    </html>
+    <TanstackProvider>
+      <html lang="pt-br">
+        <body className={theme}>
+          <main>{children}</main>
+        </body>
+      </html>
+    </TanstackProvider>
   );
 }
