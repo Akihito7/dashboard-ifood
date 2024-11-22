@@ -12,6 +12,8 @@ import { getTotalCountOrdersCancelledByMonth } from "@/api/get-total-count-order
 import { GetTotalCountOrdersByDay } from "@/api/types/get-total-count-orders-by-day";
 import { GetTotalCountOrdersByMonth } from "@/api/types/get-total-count-orders-by-month";
 import { GetTotalCountOrdersCancelledByMonth } from "@/api/types/get-total-count-orders-canceled-by-month";
+import { getBestSellersProducts } from "@/api/get-best-sellers-products";
+import { GetBestSellersProducts } from "@/api/types/get-best-sellers-products";
 
 export function ContentDashboard() {
   const currentDateIso = new Date().toISOString();
@@ -50,6 +52,11 @@ export function ContentDashboard() {
     queryKey: ["ordersCountCancelled"],
     queryFn: async () => getTotalCountOrdersCancelledByMonth(currentDateIso),
   });
+
+  const { data : bestSellersProducts, error : errorBestSellersProducts} = useQuery<GetBestSellersProducts[]>({
+    queryKey : ['bestSellers'],
+    queryFn : getBestSellersProducts
+  })
 
   return (
     <div className="w-full min-h-screen bg-white dark:bg-background-dark flex justify-center py-4">
@@ -163,7 +170,7 @@ export function ContentDashboard() {
           </div>
 
           <div className="col-span-1 sm:col-span-1 lg:col-span-1">
-            <GraphicBestSellers />
+            <GraphicBestSellers items={bestSellersProducts}/>
           </div>
         </div>
       </div>
