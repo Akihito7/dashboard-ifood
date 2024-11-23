@@ -99,7 +99,7 @@ export function ContentDashboard() {
                 {isLoadingTotalRevenueByMonth
                   ? ""
                   : Number(
-                      totalRevenueByMonth!.currentMonthTotalRevenue
+                      totalRevenueByMonth?.currentMonthTotalRevenue
                     ).toLocaleString("pt-br", {
                       currency: "BRL",
                       style: "currency",
