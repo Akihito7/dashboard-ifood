@@ -5,12 +5,13 @@ import { login } from "@/api/login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoginDTO } from "@/dtos/login-dto";
-import { AppError } from "@/utils/app-error";
 import { useState } from "react";
+import { useRouter } from "next/navigation"
 
 export function FormLogin() {
     const [email, setEmail] = useState<string>();
     const [password, setPassword] = useState<string>();
+    const router = useRouter();
 
     async function handleLogin({ email, password }: LoginDTO) {
         try {
@@ -22,6 +23,7 @@ export function FormLogin() {
                     httpOnly: true
                 }
             })
+            router.push("/dashboard");
         } catch (error: any) {
             alert(error.message)
         }
