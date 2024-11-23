@@ -8,13 +8,15 @@ import { SiFoodpanda } from "react-icons/si";
 import { IoIosArrowDown } from "react-icons/io";
 import { handleThemeCookies } from "@/actions/theme-cookies";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function Header() {
   async function handleToggleTheme() {
     await handleThemeCookies();
   }
 
-  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-12 py-4">
@@ -25,30 +27,46 @@ export function Header() {
 
       <nav className="flex-1 gap-4">
         <ul className="flex items-center gap-4">
-          <li
-            className="flex items-center gap-2 hover:cursor-pointer"
-            onClick={() => router.push("/dashboard")}
-          >
-            <IoHomeOutline
-              size={20}
-              className="text-black dark:text-foreground-dark"
-            />
-            <span className="text-black dark:text-foreground-dark text-md">
-              Dashboard
-            </span>
+          <li className="flex items-center gap-2 hover:cursor-pointer">
+            <Link href="/dashboard" className="flex gap-2">
+              <IoHomeOutline
+                size={20}
+                className={`${
+                  pathname === "/dashboard"
+                    ? "text-blue-500"
+                    : "dark:text-foreground-dark text-foreground-light"
+                }`}
+              />
+              <span
+                className={`${
+                  pathname === "/dashboard"
+                    ? "text-blue-500"
+                    : "dark:text-foreground-dark text-foreground-light"
+                }`}
+              >
+                Dashboard
+              </span>
+            </Link>
           </li>
 
-          <li
-            className="flex items-center gap-2 hover:cursor-pointer"
-            onClick={() => router.push("/orders")}
-          >
-            <IoFastFoodOutline
-              size={20}
-              className="text-black dark:text-foreground-dark"
-            />
-            <span className="text-black dark:text-foreground-dark text-md">
-              Pedidos
-            </span>
+          <li className="flex items-center hover:cursor-pointer">
+            <Link href="/orders" className="flex gap-2">
+              <IoFastFoodOutline
+                size={20}
+                className={`${
+                  pathname === "/orders"
+                    ? "text-blue-500"
+                    : "dark:text-foreground-dark text-foreground-light"
+                }`}
+              />
+              <span  className={`${
+                  pathname === "/orders"
+                    ? "text-blue-500"
+                    : "dark:text-foreground-dark text-foreground-light"
+                }`}>
+                Pedidos
+              </span>
+            </Link>
           </li>
         </ul>
       </nav>
