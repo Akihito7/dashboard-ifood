@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFilterContext } from "@/hooks/use-filter-context";
+import { DatePickerSingle } from "@/components/date-picker-single";
 
 export function FiltersOrders() {
   const {
@@ -35,6 +36,8 @@ export function FiltersOrders() {
       <p className="text-foreground-light text-md dark:text-foreground-dark">
         Filtros :
       </p>
+
+      <DatePickerSingle />
 
       <Input
         className="w-48  dark:border-gray-800 border text-foreground-light text-md dark:text-foreground-dark"

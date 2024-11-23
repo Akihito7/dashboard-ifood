@@ -31,7 +31,7 @@ export function DatePickerRange({
             variant={"outline"}
             className={cn(
               "w-[300px] justify-start text-left font-normal",
-              !date && "text-muted-foreground", "dark:text-foreground-dark"
+              !date && "text-muted-foreground", "dark:text-foreground-dark text-foreground-light"
             )}
           >
             <CalendarIcon />
@@ -45,11 +45,11 @@ export function DatePickerRange({
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Escolha uma data</span>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 dark:text-foreground-dark" align="start">
+        <PopoverContent className="w-auto p-0 bg-background-light text-foreground-light dark:bg-background-dark dark:text-foreground-dark" align="start">
           <Calendar
             initialFocus
             mode="range"

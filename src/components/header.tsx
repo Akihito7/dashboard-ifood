@@ -7,12 +7,14 @@ import {
 import { SiFoodpanda } from "react-icons/si";
 import { IoIosArrowDown } from "react-icons/io";
 import { handleThemeCookies } from "@/actions/theme-cookies";
+import { useRouter } from "next/navigation";
 
 export function Header() {
-
   async function handleToggleTheme() {
-    await handleThemeCookies()
+    await handleThemeCookies();
   }
+
+  const router = useRouter();
 
   return (
     <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-12 py-4">
@@ -23,7 +25,10 @@ export function Header() {
 
       <nav className="flex-1 gap-4">
         <ul className="flex items-center gap-4">
-          <li className="flex items-center gap-2 hover:cursor-pointer">
+          <li
+            className="flex items-center gap-2 hover:cursor-pointer"
+            onClick={() => router.push("/dashboard")}
+          >
             <IoHomeOutline
               size={20}
               className="text-black dark:text-foreground-dark"
@@ -33,7 +38,10 @@ export function Header() {
             </span>
           </li>
 
-          <li className="flex items-center gap-2 hover:cursor-pointer">
+          <li
+            className="flex items-center gap-2 hover:cursor-pointer"
+            onClick={() => router.push("/orders")}
+          >
             <IoFastFoodOutline
               size={20}
               className="text-black dark:text-foreground-dark"

@@ -19,6 +19,8 @@ interface FilterContextValue {
   setIdOrder: Dispatch<SetStateAction<string | undefined>>;
   statusOrder: string | undefined;
   setStatusOrder: Dispatch<SetStateAction<string | undefined>>;
+  startDate : string;
+  setStartDate : Dispatch<SetStateAction<string>>
 }
 
 export const FilterContext = createContext<FilterContextValue | undefined>(
@@ -30,6 +32,7 @@ export function FilterContextProvider({ children }: { children: ReactNode }) {
     from: new Date(),
     to: addDays(new Date(), 1),
   });
+  const [startDate, setStartDate] = useState<string>(new Date().toISOString());
 
   const [usernameClient, setUsernameClient] = useState<string | undefined>("");
   const [idOrder, setIdOrder] = useState<string | undefined>();
@@ -46,6 +49,8 @@ export function FilterContextProvider({ children }: { children: ReactNode }) {
         setIdOrder,
         statusOrder,
         setStatusOrder,
+        startDate,
+        setStartDate
       }}
     >
       {children}

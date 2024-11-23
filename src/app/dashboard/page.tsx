@@ -1,11 +1,21 @@
 import { Header } from "@/components/header";
 import { ContentDashboard } from "./content-dashboard";
+import { FilterDashboard } from "./filter-dashboard";
 
 export default function Dashboard() {
   return (
     <div className="h-screen w-full">
       <Header />
-      <ContentDashboard />
+
+      <div className="min-h-screen w-full bg-background-light dark:bg-background-dark flex justify-center">
+        <div className="max-w-[1400px] mt-4">
+          <h1 className="text-foreground-light dark:text-white text-xl mb-4 font-bold">
+            Dashboard
+          </h1>
+          <FilterDashboard />
+          <ContentDashboard />
+        </div>
+      </div>
     </div>
   );
 }

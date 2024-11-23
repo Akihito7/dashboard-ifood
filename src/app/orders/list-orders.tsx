@@ -16,12 +16,12 @@ import { formatToMoney } from "@/utils/format-to-money";
 import { useQuery } from "@tanstack/react-query";
 
 export function ListOrders() {
-  const currentIsoDate = new Date().toISOString();
-  const { usernameClient, idOrder, statusOrder } = useFilterContext();
+  const { usernameClient, idOrder, statusOrder, startDate } =
+    useFilterContext();
 
   const { data: orders, error } = useQuery<GetOrdersByDay>({
-    queryKey: ["orders"],
-    queryFn: async () => getOrdersByDay(currentIsoDate),
+    queryKey: ["orders", startDate],
+    queryFn: async () => getOrdersByDay(startDate),
   });
 
   const filteredOrders = filterOrders(orders?.orders, {
@@ -90,7 +90,6 @@ function ItemList({ item }: { item: Orders }) {
   );
 }
 
-
 function filterOrders(
   orders: Orders[] | undefined,
   filters: { usernameClient?: string; idOrder?: string; statusOrder?: string }
@@ -103,7 +102,7 @@ function filterOrders(
     const matchesUsername = usernameClient
       ? order.username.toLowerCase().includes(usernameClient.toLowerCase())
       : true;
-      
+
     const matchesStatus = statusOrder
       ? order.status.toLowerCase().includes(statusOrder.toLowerCase())
       : true;
@@ -115,4 +114,3 @@ function filterOrders(
     return matchesUsername && matchesStatus && matchesId;
   });
 }
-

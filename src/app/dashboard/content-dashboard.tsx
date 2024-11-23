@@ -14,16 +14,18 @@ import { GetTotalCountOrdersByMonth } from "@/api/types/get-total-count-orders-b
 import { GetTotalCountOrdersCancelledByMonth } from "@/api/types/get-total-count-orders-canceled-by-month";
 import { getBestSellersProducts } from "@/api/get-best-sellers-products";
 import { GetBestSellersProducts } from "@/api/types/get-best-sellers-products";
+import { useRouter } from "next/navigation";
+import { useFilterContext } from "@/hooks/use-filter-context";
 
 export function ContentDashboard() {
-  const currentDateIso = new Date().toISOString();
+  const { date, startDate } = useFilterContext()
   const {
     data: totalCountOrdersByDay,
     error: errorTotalCountByDay,
     isLoading: isLoadingTotalCountOrdersByDay,
   } = useQuery<GetTotalCountOrdersByDay>({
-    queryKey: ["totalOrdersCountByDay"],
-    queryFn: async () => getTotalCountOrdersByDay(currentDateIso),
+    queryKey: ["totalOrdersCountByDay", startDate],
+    queryFn: async () => getTotalCountOrdersByDay(startDate),
   });
 
   const {
@@ -31,8 +33,8 @@ export function ContentDashboard() {
     error: errorTotalCountOrdersByMonth,
     isLoading: isLoadingTotalCountOrdersByMonth,
   } = useQuery<GetTotalCountOrdersByMonth>({
-    queryKey: ["ordersCountByMonth"],
-    queryFn: async () => getTotalCountOrdersByMonth(currentDateIso),
+    queryKey: ["ordersCountByMonth", startDate],
+    queryFn: async () => getTotalCountOrdersByMonth(startDate),
   });
 
   const {
@@ -40,8 +42,8 @@ export function ContentDashboard() {
     error: errorTotalRevenueByMonth,
     isLoading: isLoadingTotalRevenueByMonth,
   } = useQuery<GetTotalRevenueByMonth>({
-    queryKey: ["totalRevenueByMonth"],
-    queryFn: getTotalRevenueByMonth,
+    queryKey: ["totalRevenueByMonth", startDate],
+    queryFn: async () => getTotalRevenueByMonth(startDate),
   });
 
   const {
@@ -49,8 +51,8 @@ export function ContentDashboard() {
     error: errorTotalCountOrdersCancelledByMonth,
     isLoading: isLoadingTotalCountOrdersCancelledByMonth,
   } = useQuery<GetTotalCountOrdersCancelledByMonth>({
-    queryKey: ["ordersCountCancelled"],
-    queryFn: async () => getTotalCountOrdersCancelledByMonth(currentDateIso),
+    queryKey: ["ordersCountCancelled", startDate],
+    queryFn: async () => getTotalCountOrdersCancelledByMonth(startDate),
   });
 
   const { data : bestSellersProducts, error : errorBestSellersProducts} = useQuery<GetBestSellersProducts[]>({
@@ -59,12 +61,7 @@ export function ContentDashboard() {
   })
 
   return (
-    <div className="w-full min-h-screen bg-white dark:bg-background-dark flex justify-center py-4">
-      <div className="flex flex-col max-w-[1400px] px-12">
-        <h1 className="text-foreground-light dark:text-white text-xl mb-4 font-bold">
-          Dashboard
-        </h1>
-
+     <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
           <Card className="py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
             <CardTitle>
@@ -173,7 +170,6 @@ export function ContentDashboard() {
             <GraphicBestSellers items={bestSellersProducts}/>
           </div>
         </div>
-      </div>
-    </div>
+      </>
   );
 }
