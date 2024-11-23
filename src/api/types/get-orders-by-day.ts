@@ -9,4 +9,5 @@ export interface Orders {
   total_price: string;
   created_at: string;
   username : string;
+  time_elapsed : string;
 }

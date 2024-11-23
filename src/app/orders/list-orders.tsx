@@ -69,7 +69,7 @@ function ItemList({ item }: { item: Orders }) {
         {item.id}
       </TableCell>
       <TableCell className="text-foreground-light dark:text-foreground-dark text-sm">
-        {item.order_date}
+        {item.time_elapsed}
       </TableCell>
       <TableCell className="text-foreground-light dark:text-foreground-dark text-sm">
         {item.status}
