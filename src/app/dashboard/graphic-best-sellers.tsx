@@ -29,10 +29,10 @@ export function GraphicBestSellers({ items }: GraphicBestSellersProps) {
   return (
     <Card className="h-[460px] py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800 justify-between">
       <CardHeader>
-        <CardTitle className="mb-2 text-md dark:text-foreground-dark">
+        <CardTitle className="mb-2 text-md dark:text-foreground-dark text-foreground-light">
           Produtos mais vendidos
         </CardTitle>
-        <CardDescription className="mb-2 text-md dark:text-foreground-dark">
+        <CardDescription className="mb-2 text-md dark:text-foreground-dark text-foreground-light">
           Produtos mais vendidos em todo período
         </CardDescription>
       </CardHeader>

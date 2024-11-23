@@ -41,7 +41,7 @@ export function GraphicLineChart({ items }: GraphicLineChartProps) {
   } satisfies ChartConfig;
 
   return (
-    <ChartContainer config={chartConfig} className="h-96">
+    <ChartContainer config={chartConfig} className="h-[360px]">
       <ResponsiveContainer>
         <LineChart
           accessibilityLayer

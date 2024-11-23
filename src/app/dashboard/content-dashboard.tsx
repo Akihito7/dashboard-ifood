@@ -5,7 +5,7 @@ import { GraphicRevenueByPeriod } from "./graphic-revenue-by-period";
 import { GraphicBestSellers } from "./graphic-best-sellers";
 import { getTotalCountOrdersByDay } from "@/api/get-total-count-orders-by-day";
 import { useQuery } from "@tanstack/react-query";
-import {getTotalCountOrdersByMonth } from "@/api/get-total-count-orders-by-month";
+import { getTotalCountOrdersByMonth } from "@/api/get-total-count-orders-by-month";
 import { getTotalRevenueByMonth } from "@/api/get-total-revenue-by-month";
 import { GetTotalRevenueByMonth } from "@/api/types/get-total-revenue-by-month";
 import { getTotalCountOrdersCancelledByMonth } from "@/api/get-total-count-orders-cancelled-by-month";
@@ -16,9 +16,13 @@ import { getBestSellersProducts } from "@/api/get-best-sellers-products";
 import { GetBestSellersProducts } from "@/api/types/get-best-sellers-products";
 import { useRouter } from "next/navigation";
 import { useFilterContext } from "@/hooks/use-filter-context";
+import { SkeletonLoader } from "@/components/skeleton-loader";
+import { Show } from "@/components/show";
+import { GetRevenueByPeriod } from "@/api/types/get-revenue-by-period";
+import { getRevenueByPeriod } from "@/api/get-revenue-by-period";
 
 export function ContentDashboard() {
-  const { date, startDate } = useFilterContext()
+  const { date, startDate } = useFilterContext();
   const {
     data: totalCountOrdersByDay,
     error: errorTotalCountByDay,
@@ -55,14 +59,34 @@ export function ContentDashboard() {
     queryFn: async () => getTotalCountOrdersCancelledByMonth(startDate),
   });
 
-  const { data : bestSellersProducts, error : errorBestSellersProducts} = useQuery<GetBestSellersProducts[]>({
-    queryKey : ['bestSellers'],
-    queryFn : getBestSellersProducts
-  })
+  const {
+    data: bestSellersProducts,
+    error: errorBestSellersProducts,
+    isLoading: IsLoadingBestSellersProducts,
+  } = useQuery<GetBestSellersProducts[]>({
+    queryKey: ["bestSellers"],
+    queryFn: getBestSellersProducts,
+  });
+
+  const {
+    data: revenueByPeriod,
+    error,
+    isLoading: isLoadingRevenueByPeriod,
+  } = useQuery<GetRevenueByPeriod[]>({
+    queryKey: ["revenue-by-period", date],
+    queryFn: async () =>
+      getRevenueByPeriod({
+        startDate: date!.from!.toISOString(),
+        endDate: date!.to!.toISOString(),
+      }),
+  });
 
   return (
-     <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        {isLoadingTotalRevenueByMonth ? (
+          <SkeletonLoader className="w-72 h-32 rounded-md" />
+        ) : (
           <Card className="py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
             <CardTitle>
               <CardTitle className="text-foreground-light dark:text-foreground-dark text-md mb-4">
@@ -92,7 +116,11 @@ export function ContentDashboard() {
               </p>
             </CardFooter>
           </Card>
+        )}
 
+        {isLoadingTotalCountOrdersByMonth ? (
+          <SkeletonLoader className="w-72 h-32 rounded-md" />
+        ) : (
           <Card className="py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
             <CardTitle>
               <CardTitle className="text-foreground-light dark:text-foreground-dark text-md mb-4">
@@ -115,7 +143,11 @@ export function ContentDashboard() {
               </p>
             </CardFooter>
           </Card>
+        )}
 
+        {isLoadingTotalCountOrdersByDay ? (
+          <SkeletonLoader className="w-72 h-32 rounded-md" />
+        ) : (
           <Card className="py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
             <CardTitle>
               <CardTitle className="text-foreground-light dark:text-foreground-dark text-md mb-4">
@@ -138,7 +170,11 @@ export function ContentDashboard() {
               </p>
             </CardFooter>
           </Card>
+        )}
 
+        {isLoadingTotalCountOrdersCancelledByMonth ? (
+          <SkeletonLoader className="w-72 h-32 rounded-md" />
+        ) : (
           <Card className="py-4 px-4 flex flex-col shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-800">
             <CardTitle>
               <CardTitle className="text-foreground-light dark:text-foreground-dark text-md mb-4">
@@ -154,22 +190,29 @@ export function ContentDashboard() {
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">{totalCountOrdersCancelledByMonth?.percentageChange}% </span>Em relação ao mês
-                passado
+                <span className="text-red-400">
+                  {totalCountOrdersCancelledByMonth?.percentageChange}%{" "}
+                </span>
+                Em relação ao mês passado
               </p>
             </CardFooter>
           </Card>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
+        <div className="col-span-2 sm:col-span-1 lg:col-span-2">
+          <GraphicRevenueByPeriod items={revenueByPeriod} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 w-full">
-          <div className="col-span-2 sm:col-span-1 lg:col-span-2">
-            <GraphicRevenueByPeriod />
-          </div>
-
-          <div className="col-span-1 sm:col-span-1 lg:col-span-1">
-            <GraphicBestSellers items={bestSellersProducts}/>
-          </div>
+        <div className="col-span-1 sm:col-span-1 lg:col-span-1">
+          {IsLoadingBestSellersProducts ? (
+            <SkeletonLoader className="h-[460px] col-span-1-" />
+          ) : (
+            <GraphicBestSellers items={bestSellersProducts} />
+          )}
         </div>
-      </>
+      </div>
+    </>
   );
 }

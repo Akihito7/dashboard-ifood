@@ -30,13 +30,13 @@ export const FilterContext = createContext<FilterContextValue | undefined>(
 export function FilterContextProvider({ children }: { children: ReactNode }) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
-    to: addDays(new Date(), 1),
+    to: addDays(new Date(), 7),
   });
   const [startDate, setStartDate] = useState<string>(new Date().toISOString());
 
   const [usernameClient, setUsernameClient] = useState<string | undefined>("");
-  const [idOrder, setIdOrder] = useState<string | undefined>();
-  const [statusOrder, setStatusOrder] = useState<string | undefined>();
+  const [idOrder, setIdOrder] = useState<string | undefined>("");
+  const [statusOrder, setStatusOrder] = useState<string | undefined>("");
 
   return (
     <FilterContext.Provider
