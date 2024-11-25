@@ -22,14 +22,14 @@ export function FiltersOrders() {
     setUsernameClient,
     idOrder,
     setIdOrder,
-    statusOrder,
-    setStatusOrder,
+    statusOrderId,
+    setStatusOrderId,
   } = useFilterContext();
 
   function handleRemoveAllFilter() {
     setUsernameClient("");
     setIdOrder("");
-    setStatusOrder("");
+    setStatusOrderId("");
   }
   return (
     <div className="flex items-center w-full gap-2">
@@ -57,19 +57,23 @@ export function FiltersOrders() {
         }}
       />
 
-      <Select value={statusOrder}>
-        <SelectTrigger className="w-[180px]  dark:border-gray-800 border text-foreground-light text-md dark:text-foreground-dark text-sm">
+      <Select value={String(statusOrderId) ?? ""} onValueChange={(e) => setStatusOrderId(e)}>
+        <SelectTrigger className="w-[180px]  dark:border-gray-800 border  text-foreground-light text-md dark:text-foreground-dark text-sm">
           <SelectValue
             placeholder="Selecione um status"
             className="text-foreground-light text-md dark:text-foreground-dark"
           />
         </SelectTrigger>
-        <SelectContent className=" dark:border-gray-800 border text-foreground-light text-md dark:text-foreground-dark">
+        <SelectContent className=" dark:border-gray-800 border text-foreground-light text-md dark:text-foreground-dark bg-background-light dark:bg-background-dark">
           <SelectGroup>
             <SelectLabel className="text-foreground-light text-md dark:text-foreground-dark">
               Status
             </SelectLabel>
-            <SelectItem value="Em preparo">Em Preparo</SelectItem>
+            <SelectItem value="1">Pendente</SelectItem>
+            <SelectItem value="2">Em Preparo</SelectItem>
+            <SelectItem value="3">Enviado</SelectItem>
+            <SelectItem value="4">Entregue</SelectItem>
+            <SelectItem value="5">Cancelado</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

@@ -17,8 +17,8 @@ interface FilterContextValue {
   setUsernameClient: Dispatch<SetStateAction<string | undefined>>;
   idOrder: string | undefined;
   setIdOrder: Dispatch<SetStateAction<string | undefined>>;
-  statusOrder: string | undefined;
-  setStatusOrder: Dispatch<SetStateAction<string | undefined>>;
+  statusOrderId: string | number | undefined;
+  setStatusOrderId: Dispatch<SetStateAction<string | number | undefined>>;
   startDate : string;
   setStartDate : Dispatch<SetStateAction<string>>
 }
@@ -36,7 +36,7 @@ export function FilterContextProvider({ children }: { children: ReactNode }) {
 
   const [usernameClient, setUsernameClient] = useState<string | undefined>("");
   const [idOrder, setIdOrder] = useState<string | undefined>("");
-  const [statusOrder, setStatusOrder] = useState<string | undefined>("");
+  const [statusOrderId, setStatusOrderId] = useState<string | number | undefined>("");
 
   return (
     <FilterContext.Provider
@@ -47,8 +47,8 @@ export function FilterContextProvider({ children }: { children: ReactNode }) {
         setUsernameClient,
         idOrder,
         setIdOrder,
-        statusOrder,
-        setStatusOrder,
+        statusOrderId,
+        setStatusOrderId,
         startDate,
         setStartDate
       }}

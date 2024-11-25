@@ -16,9 +16,10 @@ import { useFilterContext } from "@/hooks/use-filter-context";
 import { client } from "@/providers/tanstack-provider";
 import { formatToMoney } from "@/utils/format-to-money";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export function ListOrders() {
-  const { usernameClient, idOrder, statusOrder, startDate } =
+  const { usernameClient, idOrder, statusOrderId, startDate } =
     useFilterContext();
 
   const { data: orders } = useQuery<GetOrdersByDay>({
@@ -29,7 +30,7 @@ export function ListOrders() {
   const filteredOrders = filterOrders(orders?.orders, {
     usernameClient,
     idOrder,
-    statusOrder,
+    statusOrderId,
   });
 
   return (
@@ -153,19 +154,19 @@ function ItemList({ item }: { item: Orders }) {
 
 function filterOrders(
   orders: Orders[] | undefined,
-  filters: { usernameClient?: string; idOrder?: string; statusOrder?: string }
+  filters: { usernameClient?: string; idOrder?: string; statusOrderId?: string | number }
 ): Orders[] | undefined {
   if (!orders) return;
 
-  const { usernameClient, idOrder, statusOrder } = filters;
+  const { usernameClient, idOrder, statusOrderId } = filters;
 
   return orders.filter((order) => {
     const matchesUsername = usernameClient
       ? order.username.toLowerCase().includes(usernameClient.toLowerCase())
       : true;
 
-    const matchesStatus = statusOrder
-      ? order.status.toLowerCase().includes(statusOrder.toLowerCase())
+    const matchesStatus = statusOrderId
+      ? order.status_id === Number(statusOrderId)
       : true;
 
     const matchesId = idOrder
