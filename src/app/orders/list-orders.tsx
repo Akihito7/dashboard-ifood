@@ -12,19 +12,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ExpandIcon, XIcon } from "lucide-react";
 import { useFilterContext } from "@/hooks/use-filter-context";
 import { client } from "@/providers/tanstack-provider";
 import { formatToMoney } from "@/utils/format-to-money";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { SetStateAction, useState } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import { DialogHeader } from "@/components/ui/dialog";
+import { getDetailsOrderById } from "@/api/get-details-order-by-id";
+import { GetDetailsOrderById } from "@/api/types/get-details-order-by-id";
 
 export function ListOrders() {
   const { usernameClient, idOrder, statusOrderId, startDate } =
     useFilterContext();
+  const [openDetails, setOpenDetails] = useState(false);
+  const [orderIdSelected, setOrderIdSelected] = useState<number | undefined>(
+    undefined
+  );
 
   const { data: orders } = useQuery<GetOrdersByDay>({
     queryKey: ["orders", startDate],
     queryFn: async () => getOrdersByDay(startDate),
+  });
+
+  const { data: orderSelected } = useQuery<GetDetailsOrderById[]>({
+    queryKey: ["orderSelected", orderIdSelected],
+    queryFn: async () => getDetailsOrderById(orderIdSelected),
   });
 
   const filteredOrders = filterOrders(orders?.orders, {
@@ -38,6 +52,9 @@ export function ListOrders() {
       <Table>
         <TableHeader>
           <TableRow className="border-b border-gray-300 dark:border-gray-700">
+            <TableHead className=" text-foreground-light dark:text-foreground-dark text-sm">
+              Detalhes
+            </TableHead>
             <TableHead className="w-[200px] text-foreground-light dark:text-foreground-dark text-sm">
               Identificador
             </TableHead>
@@ -57,15 +74,112 @@ export function ListOrders() {
         </TableHeader>
         <TableBody>
           {filteredOrders?.map((item: Orders, index) => (
-            <ItemList item={item} key={index} />
+            <ItemList
+              item={item}
+              setOpenDetails={setOpenDetails}
+              setOrderIdSelected={setOrderIdSelected}
+              key={index}
+            />
           ))}
         </TableBody>
       </Table>
+
+      <Dialog open={openDetails}>
+        {openDetails && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <DialogContent className="bg-background-light dark:bg-background-dark  text-foreground-light dark:text-foreground-dark relative w-full max-w-lg p-6 rounded-lg shadow-lg">
+              <DialogHeader className="mb-4">
+                <DialogTitle className="text-2xl font-semibold text-foreground-light flex dark:text-foreground-dark justify-between items-center">
+                  Detalhes do Pedido
+                  <XIcon
+                    size={24}
+                    className="cursor-pointer text-foreground-light flex dark:text-foreground-dark dark:hover:text-white"
+                    onClick={() => setOpenDetails(false)}
+                  />
+                </DialogTitle>
+              </DialogHeader>
+
+              <DialogContent>
+                {orderSelected &&
+                Array.isArray(orderSelected) &&
+                orderSelected.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex flex-col gap-1">
+                      <h2 className="text-lg font-medium text-foreground-light flex dark:text-foreground-dark mt-2">
+                        Informações do Pedido
+                      </h2>
+                      <p className="text-sm text-foreground-light flex dark:text-foreground-dark mt-2">
+                        Id do pedido: {orderSelected[0].id}
+                      </p>
+                      <p className="text-sm text-foreground-light flex dark:text-foreground-dark">
+                        Status do pedido: {orderSelected[0].status}
+                      </p>
+                      <p className="text-sm  text-foreground-light flex dark:text-foreground-dark">
+                        Cliente: {orderSelected[0].username}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-medium  text-foreground-light flex dark:text-foreground-dark mb-2">
+                        Itens
+                      </h2>
+                      <ul className="space-y-2">
+                        {orderSelected[0].items.map((item, index) => (
+                          <li
+                            key={index}
+                            className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg flex justify-between items-center"
+                          >
+                            <div>
+                              <p className="text-sm font-medium text-gray-800 dark:text-white">
+                                {item.name}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-300">
+                                <strong>Quantidade:</strong> {item.quantity}
+                              </p>
+                            </div>
+                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                              {item.price.toLocaleString("pt-br", {
+                                currency: "BRL",
+                                style: "currency",
+                              })}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-medium text-foreground-light flex dark:text-foreground-dark">
+                        Resumo
+                      </h2>
+                      <p className="text-md text-foreground-light flex dark:text-foreground-dark">
+                        Total: {orderSelected[0].total_price.toLocaleString('pt-br', {
+                          currency : "BRL",
+                          style : "currency"
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 dark:text-gray-400">
+                    Nenhum pedido selecionado.
+                  </p>
+                )}
+              </DialogContent>
+            </DialogContent>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 }
 
-function ItemList({ item }: { item: Orders }) {
+interface ItemListProps {
+  item: Orders;
+  setOpenDetails: React.Dispatch<SetStateAction<boolean>>;
+  setOrderIdSelected: React.Dispatch<SetStateAction<number | undefined>>;
+}
+function ItemList({ item, setOpenDetails, setOrderIdSelected }: ItemListProps) {
   const titleNextStatus = {
     1: "Aprovar",
     2: "Em Entrega",
@@ -90,7 +204,9 @@ function ItemList({ item }: { item: Orders }) {
   }
 
   async function handleChangeOrderStatus() {
-    if (item.status_id === 5 || item.status_id === 4) return;
+    if (item.status_id === 5 ) return;
+
+    if(item.status_id === 4) return client.invalidateQueries({ queryKey: ["orders"] });
 
     const nextStatusId = getNextStatusIdOrder(item.status_id);
 
@@ -114,6 +230,15 @@ function ItemList({ item }: { item: Orders }) {
 
   return (
     <TableRow className="border-b border-gray-300 dark:border-gray-700">
+      <TableCell className="font-medium text-foreground-light dark:text-foreground-dark text-sm cursor-pointer">
+        <ExpandIcon
+          size={18}
+          onClick={() => {
+            setOpenDetails(true);
+            setOrderIdSelected(item.id);
+          }}
+        />
+      </TableCell>
       <TableCell className="font-medium text-foreground-light dark:text-foreground-dark text-sm">
         {item.id}
       </TableCell>
@@ -154,7 +279,11 @@ function ItemList({ item }: { item: Orders }) {
 
 function filterOrders(
   orders: Orders[] | undefined,
-  filters: { usernameClient?: string; idOrder?: string; statusOrderId?: string | number }
+  filters: {
+    usernameClient?: string;
+    idOrder?: string;
+    statusOrderId?: string | number;
+  }
 ): Orders[] | undefined {
   if (!orders) return;
 
