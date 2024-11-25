@@ -10,13 +10,27 @@ import { handleThemeCookies } from "@/actions/theme-cookies";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { LogOut, PlusIcon, PencilIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+import { logout } from "@/actions/logout";
 
 export function Header() {
   async function handleToggleTheme() {
     await handleThemeCookies();
   }
 
+  const router = useRouter();
   const pathname = usePathname();
+
+  async function handleLogout() {
+    await logout();
+    router.push("/login");
+  }
 
   return (
     <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-12 py-4">
@@ -59,11 +73,13 @@ export function Header() {
                     : "dark:text-foreground-dark text-foreground-light"
                 }`}
               />
-              <span  className={`${
+              <span
+                className={`${
                   pathname === "/orders"
                     ? "text-blue-500"
                     : "dark:text-foreground-dark text-foreground-light"
-                }`}>
+                }`}
+              >
                 Pedidos
               </span>
             </Link>
@@ -82,15 +98,42 @@ export function Header() {
           />
         </button>
 
-        <button className="px-4 py-2 flex bg-transparent border border-dark dark:border-gray-800 justify-center rounded-md gap-2 items-center dark:shadow-lg ">
-          <span className="text-black dark:text-foreground-dark text-md">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="px-4 py-2 flex bg-transparent border border-dark dark:border-gray-800 justify-center rounded-md gap-2 items-center dark:shadow-lg text-black dark:text-foreground-dark text-md">
             Burguer King
-          </span>
-          <IoIosArrowDown
-            size={20}
-            className="text-black dark:text-foreground-dark"
-          />
-        </button>
+            <IoIosArrowDown
+              size={20}
+              className="text-foreground-light dark:text-foreground-dark"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="border border-dark rounded-md p-4 mt-2 border-dark dark:border-gray-800 justify-center bg-background-light dark:bg-background-dark gap-2 flex flex-col">
+            <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
+              Mudar Nome
+              <PencilIcon
+                size={18}
+                className="text-foreground-light dark:text-foreground-dark"
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
+              Adicionar funcionario
+              <PlusIcon
+                size={18}
+                className="text-foreground-light dark:text-foreground-dark"
+              />
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center cursor-pointer"
+            >
+              Logout
+              <LogOut
+                size={18}
+                className="text-foreground-light dark:text-foreground-dark"
+              />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
