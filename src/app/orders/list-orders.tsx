@@ -1,17 +1,19 @@
 "use client";
 
+import { changeOrderStatus } from "@/api/change-order-status";
 import { getOrdersByDay } from "@/api/get-orders-by-day";
 import { GetOrdersByDay, Orders } from "@/api/types/get-orders-by-day";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { useFilterContext } from "@/hooks/use-filter-context";
+import { client } from "@/providers/tanstack-provider";
 import { formatToMoney } from "@/utils/format-to-money";
 import { useQuery } from "@tanstack/react-query";
 
@@ -19,7 +21,7 @@ export function ListOrders() {
   const { usernameClient, idOrder, statusOrder, startDate } =
     useFilterContext();
 
-  const { data: orders, error } = useQuery<GetOrdersByDay>({
+  const { data: orders } = useQuery<GetOrdersByDay>({
     queryKey: ["orders", startDate],
     queryFn: async () => getOrdersByDay(startDate),
   });
@@ -63,6 +65,52 @@ export function ListOrders() {
 }
 
 function ItemList({ item }: { item: Orders }) {
+  const titleNextStatus = {
+    1: "Aprovar",
+    2: "Em Entrega",
+    3: "Entregue",
+    4: "Concluido",
+    5: "Cancelado",
+  };
+
+  function getNextStatusIdOrder(id: number) {
+    const idKey = id as keyof typeof nextStatus;
+    const nextStatus = {
+      1: 2,
+      2: 3,
+      3: 4,
+      5: 5,
+    };
+    return nextStatus[idKey] || id;
+  }
+
+  function getTitleNextStatusOrder(statusId: keyof typeof titleNextStatus) {
+    return titleNextStatus[statusId];
+  }
+
+  async function handleChangeOrderStatus() {
+    if (item.status_id === 5 || item.status_id === 4) return;
+
+    const nextStatusId = getNextStatusIdOrder(item.status_id);
+
+    await changeOrderStatus({
+      orderId: item.id,
+      nextIdOrderStatus: nextStatusId,
+    });
+
+    return client.invalidateQueries({ queryKey: ["orders"] });
+  }
+
+  async function handleRefuseOrder() {
+    if (item.status_id === 1) {
+      await changeOrderStatus({
+        orderId: item.id,
+        nextIdOrderStatus: 5,
+      });
+      return client.invalidateQueries({ queryKey: ["orders"] });
+    }
+  }
+
   return (
     <TableRow className="border-b border-gray-300 dark:border-gray-700">
       <TableCell className="font-medium text-foreground-light dark:text-foreground-dark text-sm">
@@ -81,10 +129,23 @@ function ItemList({ item }: { item: Orders }) {
         {formatToMoney(item.total_price)}
       </TableCell>
       <TableCell className="text-foreground-light dark:text-foreground-dark text-sm">
-        Recusar pedido
+        <Button
+          className="dark:shadow-lg border border-gray-200 dark:border-gray-800 rounded-md"
+          onClick={handleChangeOrderStatus}
+        >
+          {getTitleNextStatusOrder(
+            item.status_id as keyof typeof titleNextStatus
+          )}
+        </Button>
       </TableCell>
       <TableCell className="text-foreground-light dark:text-foreground-dark text-sm">
-        Aceitar pedido
+        <Button
+          className="dark:shadow-lg border border-gray-200 dark:border-gray-800 rounded-md"
+          disabled={item.status_id != 1}
+          onClick={handleRefuseOrder}
+        >
+          Cancelar
+        </Button>
       </TableCell>
     </TableRow>
   );

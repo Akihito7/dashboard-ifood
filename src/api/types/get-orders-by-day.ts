@@ -10,4 +10,5 @@ export interface Orders {
   created_at: string;
   username : string;
   time_elapsed : string;
+  status_id : number;
 }
