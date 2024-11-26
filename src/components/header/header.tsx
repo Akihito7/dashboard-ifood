@@ -28,9 +28,18 @@ import {
 
 import { getCookies, setCookies } from "@/actions/cookies";
 import { DialogHeader } from "../ui/dialog";
-import { FormLoginRegisterEmplooye, FormRegisterEmplooye } from "./form-register-emplooye";
-import { ChangeNameCompanyType, FormChangeNameCompany } from "./form-change-name-company";
+import {
+  FormLoginRegisterEmplooye,
+  FormRegisterEmplooye,
+} from "./form-register-emplooye";
+import {
+  ChangeNameCompanyType,
+  FormChangeNameCompany,
+} from "./form-change-name-company";
 import { registerEmplooye } from "@/api/register-emplooye";
+import { useQuery } from "@tanstack/react-query";
+import { getUserDetails } from "@/api/get-user-details";
+import { GetUserDetails } from "@/api/types/get-user-details";
 
 interface StatusDialogProps {
   type: "changeName" | "addEmplooye";
@@ -57,12 +66,17 @@ export function Header() {
     await handleThemeCookies();
   }
 
+  const { data: user, error: userError } = useQuery<GetUserDetails>({
+    queryKey: ["user"],
+    queryFn: async () => getUserDetails(),
+  });
+
   async function handleLogout() {
     await logout();
     router.push("/login");
   }
 
-  async function handleSetNameCompany({ companyName}: ChangeNameCompanyType) {
+  async function handleSetNameCompany({ companyName }: ChangeNameCompanyType) {
     await setCookies({
       key: KEY_NAME_COMPANY,
       value: companyName,
@@ -72,7 +86,7 @@ export function Header() {
       },
     });
 
-    handleCloseModal("changeName")
+    handleCloseModal("changeName");
   }
 
   async function getNameCompany() {
@@ -81,28 +95,27 @@ export function Header() {
     setNameCompany(companyName);
   }
 
-  async function handleCloseModal(type : "changeName" | "addEmplooye"){
-    if(type === "changeName"){
-      setStatusDialog(prev => {
+  async function handleCloseModal(type: "changeName" | "addEmplooye") {
+    if (type === "changeName") {
+      setStatusDialog((prev) => {
         return [
           {
-            type : "changeName",
-            open : false
+            type: "changeName",
+            open: false,
           },
-          prev[1]
-        ]
-      })
-    } 
-    else {
-      setStatusDialog(prev => {
+          prev[1],
+        ];
+      });
+    } else {
+      setStatusDialog((prev) => {
         return [
           prev[0],
           {
-            type : "addEmplooye",
-            open : false
+            type: "addEmplooye",
+            open: false,
           },
-        ]
-      })
+        ];
+      });
     }
   }
 
@@ -203,48 +216,53 @@ export function Header() {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="border border-dark rounded-md p-4 mt-2 border-dark dark:border-gray-800 justify-center bg-background-light dark:bg-background-dark gap-2 flex flex-col">
-            <button
-              onClick={() => {
-                setStatusDialog((prev) => {
-                  return [
-                    {
-                      type: "changeName",
-                      open: true,
-                    },
-                    prev[1],
-                  ];
-                });
-              }}
-            >
-              <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
-                Mudar Nome
-                <PencilIcon
-                  size={18}
-                  className="text-foreground-light dark:text-foreground-dark"
-                />
-              </DropdownMenuItem>
-            </button>
-            <button
-              onClick={() => {
-                setStatusDialog((prev) => {
-                  return [
-                    prev[0],
-                    {
-                      type: "addEmplooye",
-                      open: true,
-                    },
-                  ];
-                });
-              }}
-            >
-              <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
-                Adicionar Funcionário
-                <PlusIcon
-                  size={18}
-                  className="text-foreground-light dark:text-foreground-dark"
-                />
-              </DropdownMenuItem>
-            </button>
+            {user?.roles === "admin" && (
+              <button
+                onClick={() => {
+                  setStatusDialog((prev) => {
+                    return [
+                      {
+                        type: "changeName",
+                        open: true,
+                      },
+                      prev[1],
+                    ];
+                  });
+                }}
+              >
+                <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
+                  Mudar Nome
+                  <PencilIcon
+                    size={18}
+                    className="text-foreground-light dark:text-foreground-dark"
+                  />
+                </DropdownMenuItem>
+              </button>
+            )}
+
+            {user?.roles === "admin" && (
+              <button
+                onClick={() => {
+                  setStatusDialog((prev) => {
+                    return [
+                      prev[0],
+                      {
+                        type: "addEmplooye",
+                        open: true,
+                      },
+                    ];
+                  });
+                }}
+              >
+                <DropdownMenuItem className="text-foreground-light dark:text-foreground-dark flex gap-2 items-center  cursor-pointer">
+                  Adicionar Funcionário
+                  <PlusIcon
+                    size={18}
+                    className="text-foreground-light dark:text-foreground-dark"
+                  />
+                </DropdownMenuItem>
+              </button>
+            )}
 
             <DropdownMenuItem
               onClick={handleLogout}
@@ -285,7 +303,7 @@ export function Header() {
                     />
                   </DialogTitle>
 
-                  <FormChangeNameCompany  onSubmit={handleSetNameCompany}/>
+                  <FormChangeNameCompany onSubmit={handleSetNameCompany} />
                 </DialogHeader>
               </DialogContent>
             </div>
@@ -318,7 +336,7 @@ export function Header() {
                     />
                   </DialogTitle>
 
-                  <FormRegisterEmplooye onSubmit={handleRegisterEmplooye}/>
+                  <FormRegisterEmplooye onSubmit={handleRegisterEmplooye} />
                 </DialogHeader>
               </DialogContent>
             </div>

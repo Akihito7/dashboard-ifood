@@ -57,7 +57,10 @@ export function FiltersOrders() {
         }}
       />
 
-      <Select value={String(statusOrderId) ?? ""} onValueChange={(e) => setStatusOrderId(e)}>
+      <Select
+        value={String(statusOrderId) ?? ""}
+        onValueChange={(e) => setStatusOrderId(e)}
+      >
         <SelectTrigger className="w-[180px]  dark:border-gray-800 border  text-foreground-light text-md dark:text-foreground-dark text-sm">
           <SelectValue
             placeholder="Selecione um status"
@@ -77,15 +80,6 @@ export function FiltersOrders() {
           </SelectGroup>
         </SelectContent>
       </Select>
-
-      <Button className=" dark:bg-gray-800 text-foreground-light text-md dark:text-foreground-dark text-sm">
-        <AiOutlineSearch
-          size={22}
-          className="text-foreground-light text-md dark:text-foreground-dark"
-        />
-        Filtrar resultados
-      </Button>
-
       <Button
         className=" dark:border-gray-800 dark:border text-foreground-light text-md dark:text-foreground-dark text-sm"
         onClick={handleRemoveAllFilter}
