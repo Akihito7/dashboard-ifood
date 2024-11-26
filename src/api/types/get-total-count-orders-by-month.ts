@@ -1,4 +1,4 @@
 export interface GetTotalCountOrdersByMonth {
-  totalOrders: number;
-  percentageChange: number;
+  total_orders_current: number;
+  percentage_change: number;
 }

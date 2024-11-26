@@ -14,10 +14,8 @@ import { GetTotalCountOrdersByMonth } from "@/api/types/get-total-count-orders-b
 import { GetTotalCountOrdersCancelledByMonth } from "@/api/types/get-total-count-orders-canceled-by-month";
 import { getBestSellersProducts } from "@/api/get-best-sellers-products";
 import { GetBestSellersProducts } from "@/api/types/get-best-sellers-products";
-import { useRouter } from "next/navigation";
 import { useFilterContext } from "@/hooks/use-filter-context";
 import { SkeletonLoader } from "@/components/skeleton-loader";
-import { Show } from "@/components/show";
 import { GetRevenueByPeriod } from "@/api/types/get-revenue-by-period";
 import { getRevenueByPeriod } from "@/api/get-revenue-by-period";
 
@@ -130,14 +128,14 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                {totalCountOrdersByMonth?.totalOrders}
+                {totalCountOrdersByMonth?.total_orders_current}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
                 <span className="text-red-400">
-                  {totalCountOrdersByMonth?.percentageChange}%{" "}
+                  {totalCountOrdersByMonth?.percentage_change}%{" "}
                 </span>
                 Em relação ao mês passado
               </p>
@@ -157,14 +155,14 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                {totalCountOrdersByDay?.totalOrders}
+                {totalCountOrdersByDay?.total_orders_current}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
                 <span className="text-red-400">
-                  {totalCountOrdersByDay?.percentageChange}%{" "}
+                  {totalCountOrdersByDay?.percentage_change}%{" "}
                 </span>
                 Em relação ao dia anterior
               </p>
@@ -184,14 +182,14 @@ export function ContentDashboard() {
 
             <CardContent className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-3xl font-semibold">
-                {totalCountOrdersCancelledByMonth?.totalOrdersCancelled}
+                {totalCountOrdersCancelledByMonth?.total_orders_cancelled}
               </p>
             </CardContent>
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
                 <span className="text-red-400">
-                  {totalCountOrdersCancelledByMonth?.percentageChange}%{" "}
+                  {totalCountOrdersCancelledByMonth?.percentage_change}%{" "}
                 </span>
                 Em relação ao mês passado
               </p>
@@ -216,3 +214,5 @@ export function ContentDashboard() {
     </>
   );
 }
+
+

@@ -1,5 +1,5 @@
 export interface GetTotalCountOrdersCancelledByMonth {
-  totalOrdersCancelled : number;
-  percentageChange : number;
+  total_orders_cancelled : number;
+  percentage_change : number;
 
 }
