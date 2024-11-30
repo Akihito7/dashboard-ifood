@@ -79,6 +79,8 @@ export function ContentDashboard() {
       }),
   });
 
+  console.log(totalCountOrdersByMonth?.percentage_change && Math.sign(totalCountOrdersByMonth.percentage_change))
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
@@ -107,7 +109,15 @@ export function ContentDashboard() {
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">
+              <span
+                  className={`
+                  ${
+                    totalRevenueByMonth?.percentageChange &&
+                    totalRevenueByMonth.percentageChange >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
                   {totalRevenueByMonth?.percentageChange}% {""}
                 </span>
                 Em relação ao mês passado
@@ -134,7 +144,15 @@ export function ContentDashboard() {
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">
+                <span
+                  className={`
+                  ${
+                    totalCountOrdersByMonth?.percentage_change &&
+                    totalCountOrdersByMonth.percentage_change >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
                   {totalCountOrdersByMonth?.percentage_change}%{" "}
                 </span>
                 Em relação ao mês passado
@@ -161,7 +179,15 @@ export function ContentDashboard() {
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">
+              <span
+                  className={`
+                  ${
+                    totalCountOrdersByDay?.percentage_change &&
+                    totalCountOrdersByDay.percentage_change >= 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
                   {totalCountOrdersByDay?.percentage_change}%{" "}
                 </span>
                 Em relação ao dia anterior
@@ -188,7 +214,15 @@ export function ContentDashboard() {
 
             <CardFooter className="p-0">
               <p className="text-foreground-light dark:text-foreground-dark text-sm">
-                <span className="text-red-400">
+              <span
+                  className={`
+                  ${
+                    totalCountOrdersCancelledByMonth?.percentage_change &&
+                    totalCountOrdersCancelledByMonth.percentage_change >= 0
+                      ? "text-red-400"
+                      : "text-green-400"
+                  }`}
+                >
                   {totalCountOrdersCancelledByMonth?.percentage_change}%{" "}
                 </span>
                 Em relação ao mês passado
@@ -214,5 +248,3 @@ export function ContentDashboard() {
     </>
   );
 }
-
-
