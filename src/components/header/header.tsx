@@ -40,6 +40,7 @@ import { registerEmplooye } from "@/api/register-emplooye";
 import { useQuery } from "@tanstack/react-query";
 import { getUserDetails } from "@/api/get-user-details";
 import { GetUserDetails } from "@/api/types/get-user-details";
+import { useSettingsContext } from "@/hooks/use-settings-context";
 
 interface StatusDialogProps {
   type: "changeName" | "addEmplooye";
@@ -58,6 +59,7 @@ export function Header() {
     },
   ]);
   const [nameCompany, setNameCompany] = useState<string>("Nova empresa");
+  const { scrollDirection } = useSettingsContext()
 
   const router = useRouter();
   const pathname = usePathname();
@@ -142,7 +144,7 @@ export function Header() {
   }, [handleSetNameCompany]);
 
   return (
-    <header className="w-full bg-background-light dark:bg-background-dark flex items-center px-12 py-4">
+    <header className={`w-full fixed bg-background-light dark:bg-background-dark flex items-center px-12 py-4 transition-opacity duration-300 ease-in-out opacity-100 ${scrollDirection === 'up' ? 'opacity-100' : 'opacity-0'}`}>
       <SiFoodpanda
         size={28}
         className="text-black dark:text-foreground-dark mr-12 hover:cursor-pointer"

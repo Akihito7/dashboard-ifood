@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { getThemeCookies } from "@/actions/theme-cookies";
 import { TanstackProvider } from "@/providers/tanstack-provider";
-import { FilterContext, FilterContextProvider } from "@/contexts/filter-context";
+import {
+  FilterContext,
+  FilterContextProvider,
+} from "@/contexts/filter-context";
+import { SettingsContextProvider } from "@/contexts/settings-context";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,14 +20,16 @@ export default async function RootLayout({
 }>) {
   const theme = await getThemeCookies();
   return (
-    <FilterContextProvider>
-      <TanstackProvider>
-        <html lang="pt-br">
-          <body className={theme}>
-            <main>{children}</main>
-          </body>
-        </html>
-      </TanstackProvider>
-    </FilterContextProvider>
+    <SettingsContextProvider>
+      <FilterContextProvider>
+        <TanstackProvider>
+          <html lang="pt-br">
+            <body className={theme}>
+              <main>{children}</main>
+            </body>
+          </html>
+        </TanstackProvider>
+      </FilterContextProvider>
+    </SettingsContextProvider>
   );
 }
